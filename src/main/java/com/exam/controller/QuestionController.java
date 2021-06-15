@@ -51,6 +51,14 @@ public class QuestionController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/quiz/all/{qid}")
+    public ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid) {
+        Quiz quiz = new Quiz();
+        quiz.setqId(qid);
+        Set<Question> questionsOfQuiz = this.questionService.getQuestionsOfQuiz(quiz);
+        return ResponseEntity.ok(questionsOfQuiz);
+    }
+
     //get single question
     @GetMapping("/{questionId}")
     public Question get(@PathVariable("questionId") Long questionId) {
@@ -58,7 +66,7 @@ public class QuestionController {
     }
 
     //delete question
-    @DeleteMapping("/{questionId")
+    @DeleteMapping("/{questionId}")
     public void deleteQuestion(@PathVariable("questionId") Long questionId) {
         this.questionService.deleteQuestion(questionId);
     }

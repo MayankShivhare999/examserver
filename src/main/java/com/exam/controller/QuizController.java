@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import com.exam.entites.exam.Category;
 import com.exam.entites.exam.Quiz;
 import com.exam.services.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,27 @@ public class QuizController {
     @DeleteMapping("/{qid}")
     public void deleteQuiz(@PathVariable("qid") Long qid){
         this.quizService.deleteQuiz(qid);
+    }
+
+    //get category specific Quiz
+    @GetMapping("/category/{cid}")
+    public ResponseEntity<?> getQuizzesOfCategory(@PathVariable("cid") Long cid) {
+        Category category = new Category();
+        category.setCid(cid);
+        return ResponseEntity.ok(this.quizService.getQuizzesOfCategory(category));
+    }
+
+    //get active quizzes
+    @GetMapping("/active")
+    public ResponseEntity<?> getActiveQuizzes() {
+        return ResponseEntity.ok(this.quizService.getActiveQuizzes());
+    }
+
+    //get active quizzes of category
+    @GetMapping("category/active/{cid}")
+    public ResponseEntity<?> getActiveQuizzesByCategory(@PathVariable("cid") Long cid) {
+        Category category = new Category();
+        category.setCid(cid);
+        return ResponseEntity.ok(this.quizService.getActiveQuizzesOfCategory(category));
     }
  }
