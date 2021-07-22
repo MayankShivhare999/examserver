@@ -9,10 +9,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin("*")
@@ -43,10 +40,15 @@ public class QuestionController {
         //Quiz quiz = new Quiz();
         Quiz quiz = this.quizService.getQuiz(qid);
         Set<Question> questions = quiz.getQuestions();
-        List list = new ArrayList(questions);
+        List<Question> list = new ArrayList(questions);
         if(list.size()>Integer.parseInt(quiz.getNumberOfQuestions())) {
             list = list.subList(0, Integer.parseInt(quiz.getNumberOfQuestions()+1));
         }
+
+        list.forEach((q) -> {
+            q.setAnswer("");
+        });
+
         Collections.shuffle(list);
         return ResponseEntity.ok(list);
     }
@@ -69,6 +71,31 @@ public class QuestionController {
     @DeleteMapping("/{questionId}")
     public void deleteQuestion(@PathVariable("questionId") Long questionId) {
         this.questionService.deleteQuestion(questionId);
+    }
+
+    //eval quiz
+    @PostMapping("/eval-quiz")
+    public ResponseEntity<?> evalQuiz(@RequestBody List<Question> questions) {
+        System.out.println(questions);
+        Double marksGot = 0.0;
+        Integer correctAnswers = 0;
+        Integer attempetd = 0;
+        for(Question q: questions){
+            Question question = this.questionService.getQuestion(q.getQuesId());
+            if(question.getAnswer().equals(q.getGivenAnswer())) {
+                correctAnswers++;
+
+                double marksSingle = Double.parseDouble(questions.get(0).getQuiz().getMaxMarks())/questions.size();
+                marksGot += marksSingle;
+            }
+
+                   if(q.getGivenAnswer()!=null || q.getGivenAnswer().equals("") ) {
+                     attempetd++;
+                   }
+        };
+
+        Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempetd);
+        return ResponseEntity.ok(map);
     }
 
 }

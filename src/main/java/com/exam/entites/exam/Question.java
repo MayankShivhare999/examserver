@@ -1,5 +1,8 @@
 package com.exam.entites.exam;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,7 +18,11 @@ public class Question {
     private String option2;
     private String option3;
     private String option4;
+
     private String answer;
+
+    @Transient
+    private String givenAnswer;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Quiz quiz;
@@ -72,16 +79,26 @@ public class Question {
         this.option3 = option3;
     }
 
+    //@JsonIgnore
     public String getAnswer() {
         return answer;
     }
 
+    //@JsonProperty("answer")
     public void setAnswer(String answer) {
         this.answer = answer;
     }
 
     public Quiz getQuiz() {
         return quiz;
+    }
+
+    public String getGivenAnswer() {
+        return givenAnswer;
+    }
+
+    public void setGivenAnswer(String givenAnswer) {
+        this.givenAnswer = givenAnswer;
     }
 
     public void setQuiz(Quiz quiz) {
